@@ -1,0 +1,12 @@
+default["lumberjack"]["version"]                    = "0.0.8"
+default["lumberjack"]["user"]                       = "lumberjack"
+default["lumberjack"]["group"]                      = "lumberjack"
+default["lumberjack"]["dir"]                        = "/opt/lumberjack"
+default["lumberjack"]["log_dir"]                    = "#{node["lumberjack"]["dir"]}/log"
+default["lumberjack"]["host"]                       = "localhost"
+default["lumberjack"]["port"]                       = "6060"
+default["lumberjack"]["ssl_key"]                    = ""
+default["lumberjack"]["ssl_certificate"]            = ""
+default["lumberjack"]["files_to_watch"]             = [ "/var/log/syslog" ]
+default["lumberjack"]["logstash_role"]              = "logstash"
+default["lumberjack"]["logstash_fqdn"]              = ""
