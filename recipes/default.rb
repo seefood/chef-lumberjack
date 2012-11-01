@@ -11,11 +11,7 @@ else
     results = search(:node, "roles:#{node["lumberjack"]["logstash_role"]} AND chef_environment:#{node.chef_environment}")
 
     if results.empty?
-      if node["lumberjack"]["ssl_certificate"].empty?
-        Chef::Application.fatal!("No Lumberjack certificate found.")
-      else
-        ssl_certificate = node["lumberjack"]["ssl_certificate"]
-      end
+      Chef::Application.fatal!("No Lumberjack certificate found.")
     else
       directory"#{node["lumberjack"]["dir"]}/ssl" do
         mode "0755"
@@ -36,6 +32,8 @@ else
       node.set["lumberjack"]["ssl_certificate"] = "#{node["lumberjack"]["dir"]}/ssl/ssl-cert-lumberjack.pem"
       ssl_certificate                           = "#{node["lumberjack"]["dir"]}/ssl/ssl-cert-lumberjack.pem"
     end
+  else
+    ssl_certificate = node["lumberjack"]["ssl_certificate"]
   end
 end
 
