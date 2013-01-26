@@ -1,5 +1,3 @@
-include_recipe "logstash::server"
-
 package "ssl-cert" do
   action :install
 end

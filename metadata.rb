@@ -6,8 +6,12 @@ version           "0.1.1"
 recipe            "lumberjack", "Installs and configures Lumberjack"
 name              "lumberjack"
 
-%w{ logrotate logstash }.each do |d|
+%w{ logrotate }.each do |d|
   depends d
+end
+
+%w{ logstash }.each do |s|
+  suggests s
 end
 
 %w{ ubuntu }.each do |os|

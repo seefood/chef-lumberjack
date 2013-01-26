@@ -1,4 +1,4 @@
-default["lumberjack"]["version"]                    = "0.0.8"
+default["lumberjack"]["version"]                    = "0.0.13"
 default["lumberjack"]["user"]                       = "lumberjack"
 default["lumberjack"]["group"]                      = "lumberjack"
 default["lumberjack"]["dir"]                        = "/opt/lumberjack"

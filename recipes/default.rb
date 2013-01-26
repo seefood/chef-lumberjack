@@ -47,14 +47,26 @@ user node["lumberjack"]["user"] do
   group node["lumberjack"]["group"]
 end
 
-cookbook_file "#{Chef::Config[:file_cache_path]}/lumberjack_amd64.deb" do
-  source "lumberjack_#{node["lumberjack"]["version"]}_amd64.deb"
-end
+case node["platform_family"]
+when "debian"
+  cookbook_file "#{Chef::Config[:file_cache_path]}/lumberjack_amd64.deb" do
+    source "lumberjack_#{node["lumberjack"]["version"]}_amd64.deb"
+  end
 
-package "lumberjack" do
-  source "#{Chef::Config[:file_cache_path]}/lumberjack_amd64.deb"
-  provider Chef::Provider::Package::Dpkg
-  action :install
+  package "lumberjack" do
+    source "#{Chef::Config[:file_cache_path]}/lumberjack_amd64.deb"
+    provider Chef::Provider::Package::Dpkg
+    action :install
+  end
+when "rhel","fedora"
+  cookbook_file "#{Chef::Config[:file_cache_path]}/lumberjack.x86_64.rpm" do
+    source "lumberjack-#{node["lumberjack"]["version"]}-1.x86_64.rpm"
+  end
+
+  yum_package "lumberjack" do
+    source "#{Chef::Config[:file_cache_path]}/lumberjack.x86_64.rpm"
+    action :install
+  end
 end
 
 directory node["lumberjack"]["log_dir"] do
@@ -72,22 +84,45 @@ logrotate_app "lumberjack" do
   create "644 root root"
 end
 
-template "/etc/init/lumberjack.conf" do
-  mode "0644"
-  source "lumberjack.conf.erb"
-  variables(
-    :dir              => node["lumberjack"]["dir"],
-    :user             => node["lumberjack"]["user"],
-    :host             => node["lumberjack"]["host"],
-    :port             => node["lumberjack"]["port"],
-    :ssl_certificate  => ssl_certificate,
-    :log_dir          => node["lumberjack"]["log_dir"],
-    :files_to_watch   => node["lumberjack"]["files_to_watch"]
-  )
-  notifies :restart, "service[lumberjack]"
-end
+case node["platform_family"]
+when "debian"
 
-service "lumberjack" do
-  provider Chef::Provider::Service::Upstart
-  action [ :enable, :start ]
+  template "/etc/init/lumberjack.conf" do
+    mode "0644"
+    source "lumberjack.conf.erb"
+    variables(
+      :dir              => node["lumberjack"]["dir"],
+      :user             => node["lumberjack"]["user"],
+      :host             => node["lumberjack"]["host"],
+      :port             => node["lumberjack"]["port"],
+      :ssl_certificate  => ssl_certificate,
+      :log_dir          => node["lumberjack"]["log_dir"],
+      :files_to_watch   => node["lumberjack"]["files_to_watch"]
+    )
+    notifies :restart, "service[lumberjack]"
+  end
+
+  service "lumberjack" do
+    provider Chef::Provider::Service::Upstart
+    action [ :enable, :start ]
+  end
+when "rhel","fedora"
+  template "/etc/init.d/lumberjack" do
+    mode "0755"
+    source "lumberjack.init.erb"
+    variables(
+      :dir              => node["lumberjack"]["dir"],
+      :user             => node["lumberjack"]["user"],
+      :host             => node["lumberjack"]["host"],
+      :port             => node["lumberjack"]["port"],
+      :ssl_certificate  => ssl_certificate,
+      :log_dir          => node["lumberjack"]["log_dir"],
+      :files_to_watch   => node["lumberjack"]["files_to_watch"]
+    )
+    notifies :restart, "service[lumberjack]"
+  end
+
+  service "lumberjack" do
+    action [ :enable, :start]
+  end
 end
