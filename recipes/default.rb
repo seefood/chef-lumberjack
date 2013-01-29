@@ -43,7 +43,6 @@ end
 
 user node["lumberjack"]["user"] do
   system true
-  shell "/bin/false"
   group node["lumberjack"]["group"]
 end
 
