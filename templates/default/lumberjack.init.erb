@@ -14,7 +14,7 @@ export LJ_CONFIG="$LJ_HOME/etc/lumberjack.conf"
 LJ_USER="lumberjack"
 LOGDIR="/var/log/lumberjack"
 LJ_LOG="<%= @log_dir %>/lumberjack.log"
-BIN_SCRIPT="<%= @dir %>/bin/lumberjack.sh --host <%= @host %> --port <%= @port %> --ssl-ca-path <%= @ssl_certificate %> <%= @files_to_watch.join(" ") %> >> $LG_LOG 2>&1"
+BIN_SCRIPT="<%= @dir %>/bin/lumberjack.sh --host <%= @host %> --port <%= @port %> --ssl-ca-path <%= @ssl_certificate %> <%= @files_to_watch.join(" ") %> >> $LJ_LOG 2>&1"
 
 if [ -f /etc/init.d/functions ] ; then
   . /etc/init.d/functions
