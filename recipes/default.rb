@@ -1,40 +1,7 @@
 include_recipe "logrotate"
 
-if Chef::Config[:solo]
-  if node["lumberjack"]["ssl_certificate"].empty?
-    Chef::Application.fatal!("No Lumberjack certificate found.")
-  else
-    ssl_certificate = node["lumberjack"]["ssl_certificate"]
-  end
-else
-  if node["lumberjack"]["ssl_certificate"].empty?
-    results = search(:node, "roles:#{node["lumberjack"]["logstash_role"]} AND chef_environment:#{node.chef_environment}")
-
-    if results.empty?
-      Chef::Application.fatal!("No Lumberjack certificate found.")
-    else
-      directory"#{node["lumberjack"]["dir"]}/ssl" do
-        mode "0755"
-        owner node["lumberjack"]["user"]
-        group node["lumberjack"]["group"]
-        recursive true
-      end
-
-      file "#{node["lumberjack"]["dir"]}/ssl/ssl-cert-lumberjack.pem" do
-        mode "0644"
-        owner node["lumberjack"]["user"]
-        group node["lumberjack"]["group"]
-        content results[0]["lumberjack"]["ssl_certificate_contents"]
-        notifies :restart, "service[lumberjack]"
-      end
-
-      node.set["lumberjack"]["host"]            = results[0]["fqdn"]
-      node.set["lumberjack"]["ssl_certificate"] = "#{node["lumberjack"]["dir"]}/ssl/ssl-cert-lumberjack.pem"
-      ssl_certificate                           = "#{node["lumberjack"]["dir"]}/ssl/ssl-cert-lumberjack.pem"
-    end
-  else
-    ssl_certificate = node["lumberjack"]["ssl_certificate"]
-  end
+if node["lumberjack"]["ssl_ca_certificate_path"].empty?
+  Chef::Application.fatal!("You must have the CA certificate installed which signed the server's certificate")
 end
 
 group node["lumberjack"]["group"] do
@@ -94,7 +61,7 @@ when "debian"
       :user             => node["lumberjack"]["user"],
       :host             => node["lumberjack"]["host"],
       :port             => node["lumberjack"]["port"],
-      :ssl_certificate  => ssl_certificate,
+      :ssl_certificate  => node["lumberjack"]["ssl_ca_certificate_path"]
       :log_dir          => node["lumberjack"]["log_dir"],
       :files_to_watch   => node["lumberjack"]["files_to_watch"]
     )
@@ -114,7 +81,7 @@ when "rhel","fedora"
       :user             => node["lumberjack"]["user"],
       :host             => node["lumberjack"]["host"],
       :port             => node["lumberjack"]["port"],
-      :ssl_certificate  => ssl_certificate,
+      :ssl_certificate  => node["lumberjack"]["ssl_ca_certificate_path"]
       :log_dir          => node["lumberjack"]["log_dir"],
       :files_to_watch   => node["lumberjack"]["files_to_watch"]
     )
