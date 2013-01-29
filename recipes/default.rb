@@ -61,7 +61,7 @@ when "debian"
       :user             => node["lumberjack"]["user"],
       :host             => node["lumberjack"]["host"],
       :port             => node["lumberjack"]["port"],
-      :ssl_certificate  => node["lumberjack"]["ssl_ca_certificate_path"]
+      :ssl_certificate  => node["lumberjack"]["ssl_ca_certificate_path"],
       :log_dir          => node["lumberjack"]["log_dir"],
       :files_to_watch   => node["lumberjack"]["files_to_watch"]
     )
@@ -81,7 +81,7 @@ when "rhel","fedora"
       :user             => node["lumberjack"]["user"],
       :host             => node["lumberjack"]["host"],
       :port             => node["lumberjack"]["port"],
-      :ssl_certificate  => node["lumberjack"]["ssl_ca_certificate_path"]
+      :ssl_certificate  => node["lumberjack"]["ssl_ca_certificate_path"],
       :log_dir          => node["lumberjack"]["log_dir"],
       :files_to_watch   => node["lumberjack"]["files_to_watch"]
     )
