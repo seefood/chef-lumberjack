@@ -50,6 +50,8 @@ start() {
   lj_pid=$!
   result=$?
 
+  echo $lj_pid > $PIDFILE
+
   if [ $result -ne 0 ] ; then
     failure
     echo -e "Lumberjack did not start successfully"
