@@ -31,11 +31,11 @@ end
 end
 
 ruby_block "ssl-certificate-setup" do
-  block do
+  block {
     node.set["lumberjack"]["ssl_key"]                  = "#{node["lumberjack"]["dir"]}/ssl/ssl-cert-lumberjack.key"
     node.set["lumberjack"]["ssl_certificate"]          = "#{node["lumberjack"]["dir"]}/ssl/ssl-cert-lumberjack.pem"
     node.set["lumberjack"]["ssl_certificate_contents"] = File.read("#{node["lumberjack"]["dir"]}/ssl/ssl-cert-lumberjack.pem")
-  end
+  }
 end
 
 group "ssl-cert" do
