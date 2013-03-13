@@ -13,24 +13,31 @@ user node["lumberjack"]["user"] do
   group node["lumberjack"]["group"]
 end
 
+case node['kernel']['machine']
+when "x86_64"
+    debarch="amd64"
+when "i686"
+    debarch="i368"
+end
+
 case node["platform_family"]
 when "debian"
-  cookbook_file "#{Chef::Config[:file_cache_path]}/lumberjack_amd64.deb" do
-    source "lumberjack_#{node["lumberjack"]["version"]}_amd64.deb"
+  cookbook_file "#{Chef::Config[:file_cache_path]}/lumberjack_#{debarch}.deb" do
+    source "lumberjack_#{node["lumberjack"]["version"]}_#{debarch}.deb"
   end
 
   package "lumberjack" do
-    source "#{Chef::Config[:file_cache_path]}/lumberjack_amd64.deb"
+    source "#{Chef::Config[:file_cache_path]}/lumberjack_#{debarch}.deb"
     provider Chef::Provider::Package::Dpkg
     action :install
   end
 when "rhel","fedora"
-  cookbook_file "#{Chef::Config[:file_cache_path]}/lumberjack.x86_64.rpm" do
-    source "lumberjack-#{node["lumberjack"]["version"]}-1.x86_64.rpm"
+  cookbook_file "#{Chef::Config[:file_cache_path]}/lumberjack.#{node['kernel']['machine']}.rpm" do
+    source "lumberjack-#{node["lumberjack"]["version"]}-1.#{node['kernel']['machine']}.rpm"
   end
 
   yum_package "lumberjack" do
-    source "#{Chef::Config[:file_cache_path]}/lumberjack.x86_64.rpm"
+    source "#{Chef::Config[:file_cache_path]}/lumberjack.#{node['kernel']['machine']}.rpm"
     action :install
   end
 end
